@@ -1,9 +1,17 @@
 const express = require('express');
 const userController = require('./../controllers/userController');
 const authController = require('./../controllers/authController');
+const passport = require('passport');
+
+const passportMiddleware = require('../controllers/passportMiddleware');
 
 const router = express.Router();
 
+router.post(
+  '/auth/google',
+  passport.authenticate('google-plus-token', { session: false }),
+  authController.authGoogle
+);
 router.post('/signup', authController.signUp);
 router.post('/login', authController.login);
 router.get('/logout', authController.logout);
@@ -16,7 +24,7 @@ router.delete('/deleteMe', userController.deleteMe);
 
 // MANAGE LECTURERS
 router
-  .route('/lecturers')
+  .route('/')
   .get(userController.getAllUsers)
   .post(userController.createUser);
 

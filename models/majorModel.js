@@ -8,8 +8,6 @@ const majorSchema = new mongoose.Schema(
       unique: true,
       trim: true
     },
-    students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project' }],
     HoP: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     timeRegistrationProjectStart: Date,
     timeRegistrationProjectEnd: Date

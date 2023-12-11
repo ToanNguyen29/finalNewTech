@@ -63,6 +63,11 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(200, user, res);
 });
 
+exports.authGoogle = catchAsync(async (req, res, next) => {
+  console.log('nguyen thanh toan: ', req.user);
+  createSendToken(200, req.user, res);
+});
+
 exports.logout = (req, res) => {
   res.cookie('jwt', 'loggedout', {
     expires: new Date(Date.now() + 10 * 1000),

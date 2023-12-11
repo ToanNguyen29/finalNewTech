@@ -9,20 +9,16 @@ const userSchema = new Schema(
   {
     mssv: {
       type: String,
-      required: [true, 'MSSV'],
-      unique: true,
       trim: true
     },
     major: { type: Schema.Types.ObjectId, ref: 'Major' },
     project: { type: Schema.Types.ObjectId, ref: 'Project' },
     firstName: {
       type: String,
-      required: [true, 'Please tell us your first name'],
       trim: true
     },
     lastName: {
       type: String,
-      required: [true, 'Please tell us your last name'],
       trim: true
     },
     role: {
@@ -39,9 +35,16 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: [true, 'Please provide a password'],
-      minleght: 8,
       select: false
+    },
+    authGoogleId: {
+      type: String,
+      default: null
+    },
+    authType: {
+      type: String,
+      enum: ['local', 'google'],
+      default: 'local'
     },
     gender: {
       type: String,
@@ -55,7 +58,6 @@ const userSchema = new Schema(
     },
     passwordConfirm: {
       type: String,
-      required: [true, 'Please confirm your password'],
       validate: {
         validator: function (value) {
           return value === this.password;
@@ -76,6 +78,10 @@ const userSchema = new Schema(
 );
 
 userSchema.pre('save', async function (next) {
+  if (this.authType.toString() !== 'local') {
+    console.log('2');
+    next();
+  }
   // Kiểm tra xem mật khẩu có thay đổi không nếu không thì không cần mã hóa
   if (!this.isModified('password')) return next();
 
@@ -86,6 +92,10 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.pre('save', function (next) {
+  if (this.authType.toString() !== 'local') {
+    console.log('1');
+    next();
+  }
   // Nếu không có thay đổi mật khẩu trong đối tượng hoặc đối tượng này là đối tượng mới thì next()
   if (!this.isModified('password') || this.isNew) return next();
   // Nếu không thỏa điều trên có nghĩa là đối tượng vừa thay đổi password nên ta sẽ update thời gian đổi password
