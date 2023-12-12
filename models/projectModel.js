@@ -17,9 +17,7 @@ const projectSchema = new mongoose.Schema(
       required: [true, 'A project must have school year']
     },
     major: { type: mongoose.Schema.Types.ObjectId, ref: 'Major' },
-    students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     lecturer: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
     startDate: Date,
     endDate: Date
   },

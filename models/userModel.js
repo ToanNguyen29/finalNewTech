@@ -12,7 +12,7 @@ const userSchema = new Schema(
       trim: true
     },
     major: { type: Schema.Types.ObjectId, ref: 'Major' },
-    project: { type: Schema.Types.ObjectId, ref: 'Project' },
+    project: [{ type: Schema.Types.ObjectId, ref: 'Project' }],
     firstName: {
       type: String,
       trim: true
