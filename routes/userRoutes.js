@@ -1,17 +1,9 @@
 const express = require('express');
 const userController = require('./../controllers/userController');
 const authController = require('./../controllers/authController');
-const passport = require('passport');
-
-const passportMiddleware = require('../controllers/passportMiddleware');
 
 const router = express.Router();
 
-router.post(
-  '/auth/google',
-  passport.authenticate('google-plus-token', { session: false }),
-  authController.authGoogle
-);
 router.post('/signup', authController.signUp);
 router.post('/login', authController.login);
 router.get('/logout', authController.logout);
@@ -22,26 +14,20 @@ router.get('/me', userController.getMe, userController.getUser);
 router.patch('/updateMe', userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);
 
-// MANAGE LECTURERS
+router.get(
+  '/oauth/google',
+  authController.googleOauthHandler,
+  authController.SEND_TOKEN_USER
+);
+
+// Admin
 router
   .route('/')
   .get(userController.getAllUsers)
-  .post(userController.createUser);
+  .post(userController.setMSSV, userController.createUser);
 
 router
-  .route('/lecturers/:id')
-  .get(userController.getUser)
-  .patch(userController.updateUser)
-  .delete(userController.deleteUser);
-
-// MANAGE STUDENTS
-router
-  .route('/students')
-  .get(userController.getAllUsers)
-  .post(userController.createUser);
-
-router
-  .route('/students/:id')
+  .route('/:id')
   .get(userController.getUser)
   .patch(userController.updateUser)
   .delete(userController.deleteUser);

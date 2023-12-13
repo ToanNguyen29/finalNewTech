@@ -14,3 +14,6 @@ exports.getProject = factory.getOne(Project, { path: 'tasks' });
 exports.createProject = factory.createOne(Project);
 exports.updateProject = factory.updateOne(Project);
 exports.deleteProject = factory.deleteOne(Project);
+
+exports.addStudent = catchAsync(async (req, res, next) => {});
+exports.removeStudent = catchAsync(async (req, res, next) => {});

@@ -1,3 +1,4 @@
+const { getGoogleOauthToken, getGoogleUser } = require('../utils/googleServer');
 const appError = require('../utils/appError');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
@@ -7,6 +8,7 @@ const sendEmail = require('./../utils/email');
 const crypto = require('crypto');
 
 const createToken = (id) => {
+  let token;
   return (token = jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN
   }));
@@ -29,7 +31,7 @@ const createSendToken = (statusCode, user, res) => {
   }
 
   res.cookie('jwt', token, cookieOption);
-
+  res.cookie('user', user, cookieOption);
   res.status(statusCode).json({
     status: 'success',
     token,
@@ -61,11 +63,6 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // 3. If everything is ok, send token to client
   createSendToken(200, user, res);
-});
-
-exports.authGoogle = catchAsync(async (req, res, next) => {
-  console.log('nguyen thanh toan: ', req.user);
-  createSendToken(200, req.user, res);
 });
 
 exports.logout = (req, res) => {
@@ -216,3 +213,47 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // 4. Log user in, send JWT
   createSendToken(200, user, res);
 });
+
+exports.googleOauthHandler = catchAsync(async (req, res, next) => {
+  const code = req.query.code;
+
+  if (!code) {
+    return next(new appError('Authorization code not provided!', 401));
+  }
+
+  // Use the code to get the id and access tokens
+  const { id_token, access_token } = await getGoogleOauthToken({ code });
+
+  // Use the token to get the User
+  const { id, email, verified_email, name, given_name, family_name } =
+    await getGoogleUser({
+      id_token,
+      access_token
+    });
+
+  const user = await User.findOne({
+    authGoogleId: id,
+    authType: 'google'
+  });
+
+  if (user) {
+    req.user = user;
+    res.redirect(process.env.FRONT_END_ORIGIN);
+    next();
+  }
+
+  const newUser = await User.create({
+    authType: 'google',
+    email: email,
+    authGoogleId: id,
+    lastName: family_name,
+    firstName: given_name
+  });
+  req.user = newUser;
+  res.redirect(process.env.FRONT_END_ORIGIN);
+  next();
+});
+
+exports.SEND_TOKEN_USER = (req, res, next) => {
+  createSendToken(201, req.user, res);
+};

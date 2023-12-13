@@ -18,6 +18,11 @@ const projectSchema = new mongoose.Schema(
     },
     major: { type: mongoose.Schema.Types.ObjectId, ref: 'Major' },
     lecturer: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    status: {
+      type: String,
+      enum: ['no browse', 'browsed', 'process', 'done'],
+      default: 'no browse'
+    },
     startDate: Date,
     endDate: Date
   },

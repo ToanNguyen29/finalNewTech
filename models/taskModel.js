@@ -16,9 +16,11 @@ const taskSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['assigned', 'in_process', 'done'],
+      enum: ['assigned', 'process', 'done'],
       default: 'assigned'
-    }
+    },
+    startDate: Date,
+    endDate: Date
   },
   { timestamps: true }
 );

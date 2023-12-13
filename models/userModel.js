@@ -12,7 +12,8 @@ const userSchema = new Schema(
       trim: true
     },
     major: { type: Schema.Types.ObjectId, ref: 'Major' },
-    project: [{ type: Schema.Types.ObjectId, ref: 'Project' }],
+    class: { type: Schema.Types.ObjectId, ref: 'Class' },
+    project: { type: Schema.Types.ObjectId, ref: 'Project' },
     firstName: {
       type: String,
       trim: true
@@ -23,12 +24,12 @@ const userSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ['user', 'lecturer', 'admin', 'HoD'],
-      default: 'user'
+      enum: ['student', 'guest', 'lecturer', 'admin', 'HoD'],
+      default: 'guest'
     },
     email: {
       type: String,
-      required: [true, 'Please provide your emal'],
+      required: [true, 'Please provide your email'],
       unique: true,
       lowercase: true,
       validate: [validator.isEmail, 'Please provide a valid email']
@@ -79,7 +80,6 @@ const userSchema = new Schema(
 
 userSchema.pre('save', async function (next) {
   if (this.authType.toString() !== 'local') {
-    console.log('2');
     next();
   }
   // Kiểm tra xem mật khẩu có thay đổi không nếu không thì không cần mã hóa
@@ -93,7 +93,6 @@ userSchema.pre('save', async function (next) {
 
 userSchema.pre('save', function (next) {
   if (this.authType.toString() !== 'local') {
-    console.log('1');
     next();
   }
   // Nếu không có thay đổi mật khẩu trong đối tượng hoặc đối tượng này là đối tượng mới thì next()

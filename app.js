@@ -1,4 +1,5 @@
 const path = require('path');
+const cors = require('cors');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -13,10 +14,22 @@ const projectRouter = require('./routes/projectRoutes');
 const userRouter = require('./routes/userRoutes');
 const majorRouter = require('./routes/majorRoutes');
 const taskRouter = require('./routes/taskRoutes');
+const notificationRouter = require('./routes/notificationRoutes');
+const classRouter = require('./routes/classRoutes');
 const app = express();
 
 // Serving static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // enable passing of cookies and HTTP credentials
+    optionsSuccessStatus: 204,
+    allowedHeaders: 'Content-Type,authorization'
+  })
+);
 
 // Set security HTTP headers
 app.use(helmet());
@@ -47,6 +60,8 @@ app.use('/api/v1/projects', projectRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/majors', majorRouter);
 app.use('/api/v1/tasks', taskRouter);
+app.use('/api/v1/notifications', notificationRouter);
+app.use('/api/v1/classes', classRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

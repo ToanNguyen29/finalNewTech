@@ -2,6 +2,7 @@ const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./handlerFactory');
+const Class = require('../models/classModel');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -56,13 +57,39 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not defined! Please use /signup instead'
-  });
-};
+exports.setMSSV = catchAsync(async (req, res, next) => {
+  if (!req.body.class) {
+    return next(new AppError('Please select class', 400));
+  }
 
+  if (req.body.role !== 'student') next();
+
+  const year = await Class.findById(req.body.class);
+
+  if (!year.start_year) {
+    return next(new AppError('Do not exist start year', 400));
+  }
+
+  const twoCharFirst = year.start_year.slice(-2);
+
+  let fourCharLast = '0001';
+  const studentFinal = await User.findOne({ role: 'student' })
+    .sort({
+      createdAt: -1
+    })
+    .exec();
+
+  if (studentFinal.mssv) {
+    const fourdigitLast = studentFinal.mssv.slice(-4);
+    const fourdigitLastInt = parseInt(fourdigitLast, 10);
+    fourCharLast = (fourdigitLastInt + 1).toString().padStart(4, '0');
+  }
+
+  req.body.mssv = `${twoCharFirst}11${fourCharLast}`;
+  next();
+});
+
+exports.createUser = factory.createOne(User);
 exports.getUser = factory.getOne(User);
 exports.getAllUsers = factory.getAll(User);
 exports.updateUser = factory.updateOne(User);
