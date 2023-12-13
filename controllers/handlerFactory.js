@@ -67,10 +67,7 @@ exports.getOne = (Model, popOptions) =>
 
 exports.getAll = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
-    let filter = {};
-    if (req.params.projectId) filter = { project: req.params.projectId };
-
-    const features = new APIFeatures(Model.find(filter), req.query)
+    const features = new APIFeatures(Model.find(), req.query)
       .filter()
       .sort()
       .limitFields()

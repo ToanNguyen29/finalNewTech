@@ -11,6 +11,9 @@ const userSchema = new Schema(
       type: String,
       trim: true
     },
+    schoolYear: {
+      type: String
+    },
     major: { type: Schema.Types.ObjectId, ref: 'Major' },
     class: { type: Schema.Types.ObjectId, ref: 'Class' },
     project: { type: Schema.Types.ObjectId, ref: 'Project' },

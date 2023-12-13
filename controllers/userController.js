@@ -48,44 +48,43 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteMe = catchAsync(async (req, res, next) => {
-  await User.findByIdAndUpdate(req.user.id, { active: false });
+// exports.deleteMe = catchAsync(async (req, res, next) => {
+//   await User.findByIdAndUpdate(req.user.id, { active: false });
 
-  res.status(204).json({
-    status: 'success',
-    data: null
-  });
-});
+//   res.status(204).json({
+//     status: 'success',
+//     data: null
+//   });
+// });
 
 exports.setMSSV = catchAsync(async (req, res, next) => {
-  if (!req.body.class) {
-    return next(new AppError('Please select class', 400));
+  if (req.body.role === 'student') {
+    if (!req.body.class) {
+      return next(new AppError('Please select class', 400));
+    }
+
+    if (!req.body.schoolYear) {
+      return next(new AppError('Please select schoo year', 400));
+    }
+
+    const twoCharFirst = req.body.schoolYear.slice(-2);
+
+    let fourCharLast = '0001';
+    const studentFinal = await User.findOne({ role: 'student' })
+      .sort({
+        createdAt: -1
+      })
+      .exec();
+
+    if (studentFinal.mssv) {
+      const fourdigitLast = studentFinal.mssv.slice(-4);
+      const fourdigitLastInt = parseInt(fourdigitLast, 10);
+      fourCharLast = (fourdigitLastInt + 1).toString().padStart(4, '0');
+    }
+
+    req.body.mssv = `${twoCharFirst}11${fourCharLast}`;
   }
 
-  if (req.body.role !== 'student') next();
-
-  const year = await Class.findById(req.body.class);
-
-  if (!year.start_year) {
-    return next(new AppError('Do not exist start year', 400));
-  }
-
-  const twoCharFirst = year.start_year.slice(-2);
-
-  let fourCharLast = '0001';
-  const studentFinal = await User.findOne({ role: 'student' })
-    .sort({
-      createdAt: -1
-    })
-    .exec();
-
-  if (studentFinal.mssv) {
-    const fourdigitLast = studentFinal.mssv.slice(-4);
-    const fourdigitLastInt = parseInt(fourdigitLast, 10);
-    fourCharLast = (fourdigitLastInt + 1).toString().padStart(4, '0');
-  }
-
-  req.body.mssv = `${twoCharFirst}11${fourCharLast}`;
   next();
 });
 
@@ -93,4 +92,11 @@ exports.createUser = factory.createOne(User);
 exports.getUser = factory.getOne(User);
 exports.getAllUsers = factory.getAll(User);
 exports.updateUser = factory.updateOne(User);
-exports.deleteUser = factory.deleteOne(User);
+exports.deleteUser = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.params.id, { active: false });
+
+  res.status(204).json({
+    status: 'success',
+    data: null
+  });
+});

@@ -12,7 +12,7 @@ router.patch('/resetPassword/:token', authController.resetPass);
 router.patch('/updateMyPassword', authController.updatePassword);
 router.get('/me', userController.getMe, userController.getUser);
 router.patch('/updateMe', userController.updateMe);
-router.delete('/deleteMe', userController.deleteMe);
+// router.delete('/deleteMe', userController.deleteMe);
 
 router.get(
   '/oauth/google',

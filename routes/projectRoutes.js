@@ -1,17 +1,14 @@
 const express = require('express');
 const projectController = require('../controllers/projectController');
 const authController = require('../controllers/authController');
-const taskRouter = require('./../routes/taskRoutes');
 
-const router = express.Router({ mergeParams: true });
-
-router.use('/:projectId/tasks', taskRouter);
+const router = express.Router();
 
 // MANAGE PROJECT
 router
   .route('/')
   .get(projectController.getAllProjects)
-  .post(projectController.setMajortLecturer, projectController.createProject);
+  .post(projectController.createProject);
 
 router
   .route('/:id')

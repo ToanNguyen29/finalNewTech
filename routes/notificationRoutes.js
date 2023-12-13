@@ -16,7 +16,11 @@ router
 router
   .route('/:id')
   .get(NotificationController.getNotification)
-  .patch(NotificationController.updateNotification)
+  .patch(
+    pdfMiddleware.upload.array('file', 5),
+    NotificationController.setPDF,
+    NotificationController.updateNotification
+  )
   .delete(NotificationController.deleteNotification);
 
 module.exports = router;
