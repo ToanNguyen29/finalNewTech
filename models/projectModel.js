@@ -34,6 +34,14 @@ const projectSchema = new mongoose.Schema(
       enum: ['no browse', 'browsed', 'process', 'done'],
       default: 'no browse'
     },
+    report: [
+      {
+        filename: {
+          type: String,
+          require: true
+        }
+      }
+    ],
     score: {
       type: Number,
       default: 0

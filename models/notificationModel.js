@@ -13,8 +13,7 @@ const notificationSchema = new mongoose.Schema(
       {
         filename: {
           type: String,
-          require: true,
-          default: ''
+          require: true
         }
       }
     ]

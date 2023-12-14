@@ -9,6 +9,17 @@ exports.setMajortLecturer = (req, res, next) => {
   next();
 };
 
+exports.setPDF = (req, res, next) => {
+  if (req.files) {
+    const media = req.files.map((file) => ({ filename: file.filename }));
+    req.body.report = media;
+  } else if (req.file) {
+    const media = { filename: req.file.filename };
+    req.body.report = media;
+  }
+  next();
+};
+
 exports.getAllProjects = factory.getAll(Project);
 exports.getProject = factory.getOne(Project, { path: 'tasks' });
 exports.createProject = factory.createOne(Project);

@@ -1,5 +1,6 @@
 const express = require('express');
 const projectController = require('../controllers/projectController');
+const pdfMiddleware = require('../controllers/pdfMiddleware');
 const authController = require('../controllers/authController');
 
 const router = express.Router();
@@ -13,7 +14,11 @@ router
 router
   .route('/:id')
   .get(projectController.getProject)
-  .patch(projectController.updateProject)
+  .patch(
+    pdfMiddleware.upload.array('report', 5),
+    projectController.setPDF,
+    projectController.updateProject
+  )
   .delete(projectController.deleteProject);
 
 module.exports = router;
