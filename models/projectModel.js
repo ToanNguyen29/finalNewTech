@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const projectSchema = new mongoose.Schema(
   {
@@ -18,10 +19,24 @@ const projectSchema = new mongoose.Schema(
     },
     major: { type: mongoose.Schema.Types.ObjectId, ref: 'Major' },
     lecturer: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    feedbackLecturer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      validate: {
+        validator: function (value) {
+          return value === this.lecturer;
+        },
+        message: 'Lecturer and feedback lecturer are the same'
+      }
+    },
     status: {
       type: String,
       enum: ['no browse', 'browsed', 'process', 'done'],
       default: 'no browse'
+    },
+    score: {
+      type: Number,
+      default: 0
     },
     startDate: Date,
     endDate: Date

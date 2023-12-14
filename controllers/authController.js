@@ -232,7 +232,7 @@ exports.googleOauthHandler = catchAsync(async (req, res, next) => {
     });
 
   const user = await User.findOne({
-    authGoogleId: id,
+    email: email,
     authType: 'google'
   });
 
