@@ -3,12 +3,6 @@ const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
 
-exports.setMajortLecturer = (req, res, next) => {
-  if (!req.body.project) req.body.major = req.params.majorId;
-  if (!req.body.lecturer) req.body.lecturer = req.user.id;
-  next();
-};
-
 exports.setPDF = (req, res, next) => {
   if (req.files) {
     const media = req.files.map((file) => ({ filename: file.filename }));
@@ -20,11 +14,40 @@ exports.setPDF = (req, res, next) => {
   next();
 };
 
+exports.setLecturerRegistration = (req, res, next) => {
+  if (!req.body.lecturer) {
+    req.body.lecturer = req.user._id;
+  }
+  if (!req.body.status) {
+    req.body.status = 'no browse';
+  }
+  next();
+};
+
+exports.setProjectByLecturer = (req, res, next) => {
+  if (!req.query.lecturer) {
+    req.query.lecturer = req.user._id;
+  }
+  next();
+};
+
 exports.getAllProjects = factory.getAll(Project);
 exports.getProject = factory.getOne(Project, { path: 'tasks' });
 exports.createProject = factory.createOne(Project);
 exports.updateProject = factory.updateOne(Project);
 exports.deleteProject = factory.deleteOne(Project);
 
-exports.addStudent = catchAsync(async (req, res, next) => {});
-exports.removeStudent = catchAsync(async (req, res, next) => {});
+exports.checkProjectOfUser = catchAsync(async (req, res, next) => {
+  const project = await Project.findById(req.params.id);
+  if (!project) {
+    return next(new AppError('Do not exist this task', 404));
+  }
+
+  if (project.lecturer.toString() == req.user._id.toString()) {
+    next();
+  }
+
+  if (req.user.project.toString() === project._id.toString()) {
+    next();
+  }
+});

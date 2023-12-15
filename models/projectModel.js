@@ -6,7 +6,6 @@ const projectSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, 'A project must have a name'],
-      unique: true,
       trim: true
     },
     description: {
@@ -31,20 +30,24 @@ const projectSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['no browse', 'browsed', 'process', 'done'],
-      default: 'no browse'
+      enum: ['no browse', 'browsed', 'process', 'done', 'cancel'],
+      default: 'browsed'
     },
     report: [
       {
         filename: {
           type: String,
-          require: true
+          default: ''
         }
       }
     ],
+    review: {
+      type: String,
+      default: ''
+    },
     score: {
       type: Number,
-      default: 0
+      default: -1
     },
     startDate: Date,
     endDate: Date

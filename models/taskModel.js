@@ -10,14 +10,18 @@ const taskSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'Project'
     },
-    lecturer: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User'
-    },
     status: {
       type: String,
       enum: ['assigned', 'process', 'done'],
       default: 'assigned'
+    },
+    descriptionOfStudent: {
+      type: String,
+      default: ''
+    },
+    review: {
+      type: String,
+      default: ''
     },
     startDate: Date,
     endDate: Date

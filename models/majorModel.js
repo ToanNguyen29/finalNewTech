@@ -8,9 +8,18 @@ const majorSchema = new mongoose.Schema(
       unique: true,
       trim: true
     },
+    description: {
+      type: String
+    },
     HoP: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    timeRegistrationProjectStart: Date,
-    timeRegistrationProjectEnd: Date
+    timeRegistrationProjectStart: {
+      type: Date,
+      default: Date.now
+    },
+    timeRegistrationProjectEnd: {
+      type: Date,
+      default: Date.now
+    }
   },
   { timestamps: true }
 );
