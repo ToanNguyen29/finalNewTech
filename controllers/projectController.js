@@ -2,6 +2,8 @@ const Project = require('../models/projectModel');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
+const appError = require('../utils/appError');
+const User = require('../models/userModel');
 
 exports.setPDF = (req, res, next) => {
   if (req.files) {
@@ -50,4 +52,21 @@ exports.checkProjectOfUser = catchAsync(async (req, res, next) => {
   if (req.user.project.toString() === project._id.toString()) {
     next();
   }
+});
+
+exports.getDetailProject = catchAsync(async (req, res, next) => {
+  const projectDetail = await Project.findById(req.params.id);
+  if (!projectDetail) {
+    return next(new appError('No project found with that id', 404));
+  }
+
+  const student = await User.find({ project: req.params.id });
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      project: projectDetail,
+      student: student
+    }
+  });
 });

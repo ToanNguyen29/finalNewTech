@@ -46,7 +46,7 @@ router
 
 router
   .route('/:id')
-  .get(projectController.getProject)
+  .get(projectController.getDetailProject)
   .patch(
     pdfMiddleware.upload.array('report', 5),
     projectController.setPDF,
