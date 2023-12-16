@@ -94,10 +94,10 @@ exports.getAllUsers = factory.getAll(User, { path: 'class' });
 exports.updateUser = factory.updateOne(User);
 
 exports.deleteUser = catchAsync(async (req, res, next) => {
-  await User.findByIdAndUpdate(req.params.id, { active: false });
+  await User.findByIdAndUpdate(req.params.id, { active: false }); //1
 
   res.status(204).json({
     status: 'success',
     data: null
-  });
+  }); //2
 });

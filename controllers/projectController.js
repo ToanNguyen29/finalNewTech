@@ -40,33 +40,21 @@ exports.updateProject = factory.updateOne(Project);
 exports.deleteProject = factory.deleteOne(Project);
 
 exports.checkProjectOfUser = catchAsync(async (req, res, next) => {
-  const project = await Project.findById(req.params.id);
+  const project = await Project.findById(req.params.id); //1
   if (!project) {
-    return next(new AppError('Do not exist this task', 404));
+    //2
+    return next(new AppError('This task does not exist', 404)); //3
   }
 
-  if (project.lecturer.toString() == req.user._id.toString()) {
-    next();
+  if (
+    project.lecturer.toString() === req.user._id.toString() ||
+    req.user.project.toString() === project._id.toString()
+  ) {
+    //4
+    next(); //5
+  } else {
+    return next(
+      new AppError('You are not authorized to access this task', 403)
+    ); //6
   }
-
-  if (req.user.project.toString() === project._id.toString()) {
-    next();
-  }
-});
-
-exports.getDetailProject = catchAsync(async (req, res, next) => {
-  const projectDetail = await Project.findById(req.params.id);
-  if (!projectDetail) {
-    return next(new appError('No project found with that id', 404));
-  }
-
-  const student = await User.find({ project: req.params.id });
-
-  res.status(201).json({
-    status: 'success',
-    data: {
-      project: projectDetail,
-      student: student
-    }
-  });
 });
