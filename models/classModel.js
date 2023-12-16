@@ -3,11 +3,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const classSchema = new Schema({
-  lecture: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: [true, 'A class must have a teacher']
-  },
   name: {
     type: String,
     unique: true,
