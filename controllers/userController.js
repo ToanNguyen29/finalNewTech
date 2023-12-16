@@ -58,7 +58,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 // });
 
 exports.setMSSV = catchAsync(async (req, res, next) => {
-  if (req.body.role === 'student') {
+  if (req.body.role === 'student' && !req.body.mssv) {
     if (!req.body.class) {
       return next(new AppError('Please select class', 400));
     }
