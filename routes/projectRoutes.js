@@ -5,7 +5,7 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-// MANAGE PROJECT - LECTURER AND HOD
+// MANAGE PROJECT - LECTURER
 router
   .route('/projectByLecturer')
   .get(
@@ -25,20 +25,43 @@ router
   .route('/:id/projectByLecturer')
   .patch(
     authController.protect,
-    authController.restrictTo('lecturer', 'HoD', 'student'),
-    projectController.checkProjectOfUser,
+    authController.restrictTo('lecturer', 'HoD'),
+    projectController.checkProjectOfLecturer,
     pdfMiddleware.upload.array('report', 5),
     projectController.setPDF,
     projectController.updateProject
   )
   .delete(
     authController.protect,
-    authController.restrictTo('lecturer', 'HoD', 'student'),
-    projectController.checkProjectOfUser,
+    authController.restrictTo('lecturer', 'HoD'),
+    projectController.checkProjectOfLecturer,
     projectController.deleteProject
   );
 
-// MANAGE PROJECT
+// MANAGE PROJECT - HoD
+router
+  .route('/projectByHoD')
+  .get(
+    authController.protect,
+    authController.restrictTo('lecturer', 'HoD'),
+    projectController.setMajorHoD,
+    projectController.getAllProjects
+  );
+
+router
+  .route('/:id/browseProject')
+  .patch(
+    authController.protect,
+    authController.restrictTo('lecturer', 'HoD'),
+    projectController.updateProject
+  )
+  .delete(
+    authController.protect,
+    authController.restrictTo('lecturer', 'HoD', 'student'),
+    projectController.deleteProject
+  );
+
+// MANAGE PROJECT - Admin
 router
   .route('/')
   .get(projectController.getAllProjects)

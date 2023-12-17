@@ -11,7 +11,7 @@ const majorSchema = new mongoose.Schema(
     description: {
       type: String
     },
-    HoP: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    HoD: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     timeRegistrationProjectStart: {
       type: Date,
       default: Date.now

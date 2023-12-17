@@ -2,8 +2,6 @@ const Project = require('../models/projectModel');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
-const appError = require('../utils/appError');
-const User = require('../models/userModel');
 
 exports.setPDF = (req, res, next) => {
   if (req.files) {
@@ -33,23 +31,30 @@ exports.setProjectByLecturer = (req, res, next) => {
   next();
 };
 
+exports.setMajorHoD = catchAsync(async (req, res, next) => {
+  const majorOfHoD = await Major.find({ HoD: req.user._id });
+  if (!majorOfHoD) {
+    return next(new AppError('This major does not exist HoD', 404));
+  }
+
+  req.query.major = majorOfHoD._id;
+  next();
+});
+
 exports.getAllProjects = factory.getAll(Project, { path: 'lecturer major' });
 exports.getProject = factory.getOne(Project, { path: 'lecturer major' });
 exports.createProject = factory.createOne(Project);
 exports.updateProject = factory.updateOne(Project);
 exports.deleteProject = factory.deleteOne(Project);
 
-exports.checkProjectOfUser = catchAsync(async (req, res, next) => {
+exports.checkProjectOfLecturer = catchAsync(async (req, res, next) => {
   const project = await Project.findById(req.params.id); //1
   if (!project) {
     //2
     return next(new AppError('This task does not exist', 404)); //3
   }
 
-  if (
-    project.lecturer.toString() === req.user._id.toString() ||
-    req.user.project.toString() === project._id.toString()
-  ) {
+  if (project.lecturer.toString() === req.user._id.toString()) {
     //4
     next(); //5
   } else {
