@@ -8,16 +8,21 @@ const router = express.Router();
 router
   .route('/')
   .get(taskController.getAllTasks)
-  .post(taskController.createTask);
+  .post(
+    authController.protect,
+    authController.restrictTo('lecturer', 'HoD'),
+    taskController.checkCreateTask,
+    taskController.createTask
+  );
 
 router.use(
   authController.protect,
-  authController.restrictTo('student', 'lecturer', 'HoD')
+  authController.restrictTo('lecturer', 'HoD')
 );
 router
   .route('/:id')
-  .get(taskController.checkTaskOfUser, taskController.getTask)
-  .patch(taskController.checkTaskOfUser, taskController.updateTask)
-  .delete(taskController.checkTaskOfUser, taskController.deleteTask);
+  .get(taskController.checkTaskOfLecturer, taskController.getTask)
+  .patch(taskController.checkTaskOfLecturer, taskController.updateTask)
+  .delete(taskController.checkTaskOfLecturer, taskController.deleteTask);
 
 module.exports = router;
