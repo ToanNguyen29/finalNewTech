@@ -49,9 +49,20 @@ const projectSchema = new mongoose.Schema(
       type: Number,
       default: -1
     },
-    startDate: Date,
-    endDate: Date,
-    waiting: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+    startDate: {
+      type: Date,
+      default: Date.now
+    },
+    endDate: {
+      type: Date,
+      default: Date.now,
+      validate: {
+        validator: function (value) {
+          return value >= this.timeRegistrationProjectStart;
+        },
+        message: 'Time end must greater than or equal time start'
+      }
+    }
   },
   { timestamps: true }
 );
