@@ -50,7 +50,8 @@ const projectSchema = new mongoose.Schema(
       default: -1
     },
     startDate: Date,
-    endDate: Date
+    endDate: Date,
+    waiting: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
   },
   { timestamps: true }
 );

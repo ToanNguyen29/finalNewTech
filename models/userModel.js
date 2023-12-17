@@ -17,6 +17,7 @@ const userSchema = new Schema(
     major: { type: Schema.Types.ObjectId, ref: 'Major' },
     class: { type: Schema.Types.ObjectId, ref: 'Class' },
     project: { type: Schema.Types.ObjectId, ref: 'Project' },
+    projectWaiting: { type: Schema.Types.ObjectId, ref: 'Project' },
     firstName: {
       type: String,
       trim: true
