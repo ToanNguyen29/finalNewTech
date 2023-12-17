@@ -1,6 +1,7 @@
 const Project = require('../models/projectModel');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
+const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 
 exports.setPDF = (req, res, next) => {
@@ -41,25 +42,61 @@ exports.setMajorHoD = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.checkProjectOfLecturer = catchAsync(async (req, res, next) => {
+  const project = await Project.findById(req.params.id);
+  if (!project) {
+    return next(new AppError('This task does not exist', 404));
+  }
+
+  if (
+    project.lecturer.toString() === req.user._id.toString() ||
+    project.feedbackLecturer.toString() === req.user._id.toString()
+  ) {
+    next();
+  } else {
+    return next(
+      new AppError('You are not authorized to access this task', 403)
+    );
+  }
+});
+
+exports.checkFeedbackLecturer = catchAsync(async (req, res, next) => {
+  const project = await Project.findById(req.params.id);
+  const studentOfProject = await User.find({ project: project._id });
+
+  if (studentOfProject.length() === 0) {
+    return next(new AppError('This project does not have any student', 404));
+  }
+  if (
+    studentOfProject.status === 'no browse' ||
+    studentOfProject.status === 'cancel'
+  ) {
+    return next(new AppError('Project is cancel or no browse', 403));
+  }
+  next();
+});
+
 exports.getAllProjects = factory.getAll(Project, { path: 'lecturer major' });
 exports.getProject = factory.getOne(Project, { path: 'lecturer major' });
 exports.createProject = factory.createOne(Project);
 exports.updateProject = factory.updateOne(Project);
 exports.deleteProject = factory.deleteOne(Project);
 
-exports.checkProjectOfLecturer = catchAsync(async (req, res, next) => {
-  const project = await Project.findById(req.params.id); //1
-  if (!project) {
-    //2
-    return next(new AppError('This task does not exist', 404)); //3
-  }
+// Lecturer
+exports.updateProjectLecturer = factory.updateOne(Project, [
+  'report',
+  'review',
+  'score',
+  'startDate',
+  'endDate',
+  'description'
+]);
 
-  if (project.lecturer.toString() === req.user._id.toString()) {
-    //4
-    next(); //5
-  } else {
-    return next(
-      new AppError('You are not authorized to access this task', 403)
-    ); //6
-  }
-});
+// HoD
+exports.browseProject = factory.updateOne(Project, ['status']);
+exports.assignFeedBackLecturer = factory.updateOne(Project, [
+  'feedbackLecturer'
+]);
+
+// Student
+exports.updateProjectLecturer = factory.updateOne(Project);

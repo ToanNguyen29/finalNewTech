@@ -23,7 +23,7 @@ const projectSchema = new mongoose.Schema(
       ref: 'User',
       validate: {
         validator: function (value) {
-          return value === this.lecturer;
+          return value !== this.lecturer;
         },
         message: 'Lecturer and feedback lecturer are the same'
       }
@@ -37,7 +37,7 @@ const projectSchema = new mongoose.Schema(
       {
         filename: {
           type: String,
-          default: '1702448079104.pdf'
+          default: ''
         }
       }
     ],

@@ -29,13 +29,7 @@ router
     projectController.checkProjectOfLecturer,
     pdfMiddleware.upload.array('report', 5),
     projectController.setPDF,
-    projectController.updateProject
-  )
-  .delete(
-    authController.protect,
-    authController.restrictTo('lecturer', 'HoD'),
-    projectController.checkProjectOfLecturer,
-    projectController.deleteProject
+    projectController.updateProjectLecturer
   );
 
 // MANAGE PROJECT - HoD
@@ -52,13 +46,22 @@ router
   .route('/:id/browseProject')
   .patch(
     authController.protect,
-    authController.restrictTo('lecturer', 'HoD'),
-    projectController.updateProject
+    authController.restrictTo('HoD'),
+    projectController.browseProject
   )
   .delete(
     authController.protect,
-    authController.restrictTo('lecturer', 'HoD', 'student'),
+    authController.restrictTo('lecturer', 'HoD'),
     projectController.deleteProject
+  );
+
+router
+  .route('/:id/feedBackLecturer')
+  .patch(
+    authController.protect,
+    authController.restrictTo('HoD'),
+    projectController.checkFeedbackLecturer,
+    projectController.assignFeedBackLecturer
   );
 
 // MANAGE PROJECT - Admin
