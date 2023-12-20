@@ -8,7 +8,8 @@ const taskSchema = new mongoose.Schema(
     },
     project: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Project'
+      ref: 'Project',
+      required: [true, 'Task must be belong to a project!']
     },
     status: {
       type: String,
@@ -23,8 +24,20 @@ const taskSchema = new mongoose.Schema(
       type: String,
       default: ''
     },
-    startDate: Date,
-    endDate: Date
+    startDate: {
+      type: Date,
+      default: Date.now
+    },
+    endDate: {
+      type: Date,
+      default: Date.now,
+      validate: {
+        validator: function (value) {
+          return value >= this.timeRegistrationProjectStart;
+        },
+        message: 'Time end must greater than or equal time start'
+      }
+    }
   },
   { timestamps: true }
 );

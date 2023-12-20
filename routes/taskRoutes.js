@@ -21,8 +21,23 @@ router.use(
 );
 router
   .route('/:id')
-  .get(taskController.checkTaskOfLecturer, taskController.getTask)
-  .patch(taskController.checkTaskOfLecturer, taskController.updateTask)
-  .delete(taskController.checkTaskOfLecturer, taskController.deleteTask);
+  .get(
+    authController.protect,
+    authController.restrictTo('lecturer', 'HoD'),
+    taskController.checkTaskOfLecturer,
+    taskController.getTask
+  )
+  .patch(
+    authController.protect,
+    authController.restrictTo('lecturer', 'HoD'),
+    taskController.checkTaskOfLecturer,
+    taskController.updateTask
+  )
+  .delete(
+    authController.protect,
+    authController.restrictTo('lecturer', 'HoD'),
+    taskController.checkTaskOfLecturer,
+    taskController.deleteTask
+  );
 
 module.exports = router;

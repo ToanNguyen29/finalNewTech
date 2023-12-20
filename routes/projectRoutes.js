@@ -64,6 +64,8 @@ router
     projectController.assignFeedBackLecturer
   );
 
+// MANAGE PROJECT - STUDENT
+
 // MANAGE PROJECT - Admin
 router
   .route('/')

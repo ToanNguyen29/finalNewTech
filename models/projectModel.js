@@ -47,7 +47,13 @@ const projectSchema = new mongoose.Schema(
     },
     score: {
       type: Number,
-      default: -1
+      default: -1,
+      validate: {
+        validator: function (value) {
+          return value === -1 || (value >= 0 && value <= 10);
+        },
+        message: 'Invalid score value'
+      }
     },
     startDate: {
       type: Date,

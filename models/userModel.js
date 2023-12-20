@@ -20,10 +20,12 @@ const userSchema = new Schema(
     projectWaiting: { type: Schema.Types.ObjectId, ref: 'Project' },
     firstName: {
       type: String,
+      required: [true, 'Please provide first name'],
       trim: true
     },
     lastName: {
       type: String,
+      required: [true, 'Please provide last name'],
       trim: true
     },
     role: {
@@ -33,7 +35,7 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      required: [true, 'Please provide your email'],
+      required: [true, 'Please provide email'],
       unique: true,
       lowercase: true,
       validate: [validator.isEmail, 'Please provide a valid email']
@@ -53,13 +55,26 @@ const userSchema = new Schema(
     },
     gender: {
       type: String,
-      enum: ['Male', 'Female', 'Other']
+      enum: ['Male', 'Female', 'Other'],
+      default: 'Male'
     },
     phone: {
+      type: String,
+      unique: true,
+      validate: {
+        validator: function (value) {
+          const phoneRegex = /^0\d{9}$/;
+          return phoneRegex.test(value);
+        },
+        message: 'Invalid phone number format'
+      }
+    },
+    address: {
       type: String
     },
     birthday: {
-      type: Date
+      type: Date,
+      required: [true, 'Please provide birthday']
     },
     passwordConfirm: {
       type: String,
