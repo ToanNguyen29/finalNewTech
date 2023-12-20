@@ -15,7 +15,33 @@ exports.checkTaskOfLecturer = catchAsync(async (req, res, next) => {
     return next(new AppError('This task does not belong to any project', 404));
   }
 
-  if (project.lecturer.toString() === req.user._id.toString()) {
+  if (
+    project.lecturer &&
+    project.lecturer.toString() === req.user._id.toString()
+  ) {
+    next();
+  } else {
+    return next(
+      new AppError('You are not authorized to access this task', 403)
+    );
+  }
+});
+
+exports.checkTaskOfStudent = catchAsync(async (req, res, next) => {
+  const task = await Task.findById(req.params.id);
+  if (!task) {
+    return next(new AppError('This task does not exist', 404));
+  }
+
+  const project = await Project.findById(task.project);
+  if (!project) {
+    return next(new AppError('This task does not belong to any project', 404));
+  }
+
+  if (
+    req.user.project &&
+    req.user.project.toString() === project._id.toString()
+  ) {
     next();
   } else {
     return next(
@@ -30,7 +56,10 @@ exports.checkCreateTask = catchAsync(async (req, res, next) => {
     return next(new AppError('Do not exist this project', 404));
   }
 
-  if (project.lecturer.toString() === req.user._id.toString()) {
+  if (
+    project.lecturer &&
+    project.lecturer.toString() === req.user._id.toString()
+  ) {
     next();
   } else {
     return next(
@@ -47,3 +76,7 @@ exports.updateTask = factory.updateOne(Task);
 exports.deleteTask = factory.deleteOne(Task);
 
 // MANAGE TASK - STUDENT
+exports.updateTaskStudent = factory.updateOne(Task, [
+  'report',
+  'descriptionOfStudent'
+]);

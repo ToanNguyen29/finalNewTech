@@ -49,8 +49,10 @@ exports.checkProjectOfLecturer = catchAsync(async (req, res, next) => {
   }
 
   if (
-    project.lecturer.toString() === req.user._id.toString() ||
-    project.feedbackLecturer.toString() === req.user._id.toString()
+    (project.lecturer &&
+      project.lecturer.toString() === req.user._id.toString()) ||
+    (project.feedbackLecturer &&
+      project.feedbackLecturer.toString() === req.user._id.toString())
   ) {
     next();
   } else {
@@ -83,7 +85,7 @@ exports.checkFeedbackLecturer = catchAsync(async (req, res, next) => {
 exports.checkProjectOfStudent = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id);
 
-  if ((user.project = req.params._id)) {
+  if (user.project && user.project.toString() === req.params._id.toString()) {
     next();
   } else {
     return next(
@@ -123,7 +125,7 @@ exports.registrationProjectStudent = catchAsync(async (req, res, next) => {
   }
   const userInProject = await User.find({ project: req.params._id });
   if (!userInProject) {
-    return next(new AppError('Does not exist this project', 404));
+    return next(new AppError('Do not exist this user in poject', 404));
   }
 
   if (userInProject.length >= 2) {
@@ -136,9 +138,12 @@ exports.registrationProjectStudent = catchAsync(async (req, res, next) => {
 
   await user.save();
   const project = await Project.findById(req.params._id);
+  if (!project) {
+    return next(new AppError('Do not this project', 404));
+  }
   res.status(200).json({
     status: 'success',
-    data: { project }
+    data: project
   });
 });
 
