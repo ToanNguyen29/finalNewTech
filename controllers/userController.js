@@ -1,5 +1,4 @@
 const User = require('./../models/userModel');
-const Project = require('./../models/projectModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./handlerFactory');
@@ -80,30 +79,6 @@ exports.setMSSV = catchAsync(async (req, res, next) => {
     req.body.mssv = `${twoCharFirst}11${fourCharLast}`;
   }
   next();
-});
-
-exports.browseProjectMember = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
-  if (!user) {
-    return next(new AppError('Do not exist this user', 404));
-  }
-
-  if (!user.projectWaiting) {
-    return next(new AppError('This user is not waiting to join project', 404));
-  }
-
-  user.project = user.projectWaiting;
-  user.projectWaiting = '';
-  await user.save();
-
-  const project = await Project.findById(user.project);
-  if (!project) {
-    return next(new AppError('Do not exist this project', 404));
-  }
-  res.status(204).json({
-    status: 'success',
-    data: project
-  });
 });
 
 exports.createUser = factory.createOne(User);

@@ -85,6 +85,14 @@ router
     projectController.updateProjectStudent
   );
 
+router
+  .route('/:userId/browseProjectMember')
+  .patch(
+    authController.protect,
+    authController.restrictTo('student'),
+    projectController.browseProjectMember
+  );
+
 // MANAGE PROJECT - ADMIN
 router
   .route('/')

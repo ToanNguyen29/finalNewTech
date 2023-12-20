@@ -147,4 +147,37 @@ exports.registrationProjectStudent = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.browseProjectMember = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.userId);
+  if (!user) {
+    return next(new AppError('Do not exist this user', 404));
+  }
+
+  if (!user.projectWaiting) {
+    return next(new AppError('This user is not waiting to join project', 404));
+  }
+
+  const userFirst = await User.findById(req.user._id);
+  if (
+    !userFirst.project &&
+    userFirst.project.toString() !== user.projectWaiting.toString()
+  ) {
+    return next(
+      new AppError('You do not have permission to browse member', 403)
+    );
+  }
+  user.project = user.projectWaiting;
+  user.projectWaiting = null;
+  await user.save();
+
+  const project = await Project.findById(user.project);
+  if (!project) {
+    return next(new AppError('Do not exist this project', 404));
+  }
+  res.status(200).json({
+    status: 'success',
+    data: project
+  });
+});
+
 exports.updateProjectStudent = factory.updateOne(Project, ['report']);
