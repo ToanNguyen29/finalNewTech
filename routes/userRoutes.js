@@ -14,11 +14,7 @@ router.get('/me', userController.getMe, userController.getUser);
 router.patch('/updateMe', userController.updateMe);
 // router.delete('/deleteMe', userController.deleteMe);
 
-router.get(
-  '/oauth/google',
-  authController.googleOauthHandler,
-  authController.SEND_TOKEN_USER
-);
+router.get('/oauth/google', authController.googleOauthHandler);
 
 // Admin
 router

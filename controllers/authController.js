@@ -237,23 +237,55 @@ exports.googleOauthHandler = catchAsync(async (req, res, next) => {
   });
 
   if (user) {
-    req.user = user;
+    const token = createToken(user._id);
+
+    console.log(process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000);
+
+    const cookieOption = {
+      expires: new Date(
+        Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+      ),
+      httpOnly: false
+    };
+
+    res.cookie('jwt', token, cookieOption);
+    res.cookie('user', user, cookieOption);
+    // if (user.role==="admin"){
+    //   res.redirect(process.env.FRONT_END_ORIGIN+"/admin");
+    //   next();
+    // }
+    // else if(user.role==="student"){
+    //   res.redirect(process.env.FRONT_END_ORIGIN+"/student");
+
+    // }
+    // else if(user.role==="lecturers"){
+    //   res.redirect(process.env.FRONT_END_ORIGIN+"/student");
+
+    // }
+    if (user.role === 'admin') {
+      res.redirect(process.env.FRONT_END_ORIGIN + '/admin');
+    }
+  } else {
+    const newUser = await User.create({
+      authType: 'google',
+      email: email,
+      authGoogleId: id,
+      lastName: family_name,
+      firstName: given_name
+    });
+    const token = createToken(newUser._id);
+
+    console.log(process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000);
+
+    const cookieOption = {
+      expires: new Date(
+        Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+      ),
+      httpOnly: false
+    };
+
+    res.cookie('jwt', token, cookieOption);
+    res.cookie('user', newUser, cookieOption);
     res.redirect(process.env.FRONT_END_ORIGIN);
-    next();
   }
-
-  const newUser = await User.create({
-    authType: 'google',
-    email: email,
-    authGoogleId: id,
-    lastName: family_name,
-    firstName: given_name
-  });
-  req.user = newUser;
-  res.redirect(process.env.FRONT_END_ORIGIN);
-  next();
 });
-
-exports.SEND_TOKEN_USER = (req, res, next) => {
-  createSendToken(201, req.user, res);
-};

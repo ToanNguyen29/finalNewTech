@@ -73,8 +73,7 @@ const userSchema = new Schema(
       type: String
     },
     birthday: {
-      type: Date,
-      required: [true, 'Please provide birthday']
+      type: Date
     },
     passwordConfirm: {
       type: String,
@@ -121,10 +120,10 @@ userSchema.pre('save', function (next) {
   next();
 });
 
-userSchema.pre(/^find/, function (next) {
-  this.find({ active: { $ne: false } });
-  next();
-});
+// userSchema.pre(/^find/, function (next) {
+//   this.find({ active: { $ne: false } });
+//   next();
+// });
 
 userSchema.methods.checkPass = async function (
   candidatePassword,

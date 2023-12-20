@@ -45,7 +45,7 @@ exports.setMajorHoD = catchAsync(async (req, res, next) => {
 exports.checkProjectOfLecturer = catchAsync(async (req, res, next) => {
   const project = await Project.findById(req.params.id);
   if (!project) {
-    return next(new AppError('This task does not exist', 404));
+    return next(new AppError('This project does not exist', 404));
   }
 
   if (
@@ -55,7 +55,7 @@ exports.checkProjectOfLecturer = catchAsync(async (req, res, next) => {
     next();
   } else {
     return next(
-      new AppError('You are not authorized to access this task', 403)
+      new AppError('You are not authorized to access this project', 403)
     );
   }
 });
@@ -64,7 +64,11 @@ exports.checkFeedbackLecturer = catchAsync(async (req, res, next) => {
   const project = await Project.findById(req.params.id);
   const studentOfProject = await User.find({ project: project._id });
 
-  if (studentOfProject.length() === 0) {
+  if (!studentOfProject) {
+    return next(new AppError('Does not exist this project', 404));
+  }
+
+  if (studentOfProject.length === 0) {
     return next(new AppError('This project does not have any student', 404));
   }
   if (
@@ -72,6 +76,19 @@ exports.checkFeedbackLecturer = catchAsync(async (req, res, next) => {
     studentOfProject.status === 'cancel'
   ) {
     return next(new AppError('Project is cancel or no browse', 403));
+  }
+  next();
+});
+
+exports.checkProjectOfStudent = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  if ((user.project = req.params._id)) {
+    next();
+  } else {
+    return next(
+      new AppError('You are not authorized to access this project', 403)
+    );
   }
   next();
 });
@@ -99,4 +116,30 @@ exports.assignFeedBackLecturer = factory.updateOne(Project, [
 ]);
 
 // Student
-exports.updateProjectLecturer = factory.updateOne(Project);
+exports.registrationProjectStudent = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  if (!user.projectWaiting || user.project) {
+    return next(new AppError('Can not register more than 1 project', 403));
+  }
+  const userInProject = await User.find({ project: req.params._id });
+  if (!userInProject) {
+    return next(new AppError('Does not exist this project', 404));
+  }
+
+  if (userInProject.length >= 2) {
+    return next(new AppError('This project had enough member', 404));
+  } else if (userInProject.length === 1) {
+    user.projectWaiting = req.params._id;
+  } else {
+    user.project = req.params._id;
+  }
+
+  await user.save();
+  const project = await Project.findById(req.params._id);
+  res.status(200).json({
+    status: 'success',
+    data: { project }
+  });
+});
+
+exports.updateProjectStudent = factory.updateOne(Project, ['report']);

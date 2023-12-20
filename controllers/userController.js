@@ -63,13 +63,14 @@ exports.setMSSV = catchAsync(async (req, res, next) => {
     const twoCharFirst = req.body.schoolYear.slice(-2);
 
     let fourCharLast = '0001';
-    const studentFinal = await User.findOne({ role: 'student' })
-      .sort({
-        createdAt: -1
-      })
+    const studentFinal = await User.findOne({
+      role: 'student',
+      mssv: { $regex: `^${twoCharFirst}` }
+    })
+      .sort({ createdAt: -1 })
       .exec();
 
-    if (studentFinal.mssv) {
+    if (studentFinal) {
       const fourdigitLast = studentFinal.mssv.slice(-4);
       const fourdigitLastInt = parseInt(fourdigitLast, 10);
       fourCharLast = (fourdigitLastInt + 1).toString().padStart(4, '0');
@@ -77,7 +78,6 @@ exports.setMSSV = catchAsync(async (req, res, next) => {
 
     req.body.mssv = `${twoCharFirst}11${fourCharLast}`;
   }
-
   next();
 });
 

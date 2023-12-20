@@ -66,7 +66,26 @@ router
 
 // MANAGE PROJECT - STUDENT
 
-// MANAGE PROJECT - Admin
+router
+  .route('/:id/projectRegistrationStudent')
+  .patch(
+    authController.protect,
+    authController.restrictTo('student'),
+    projectController.registrationProjectStudent
+  );
+
+router
+  .route('/:id/projectStudent')
+  .patch(
+    authController.protect,
+    authController.restrictTo('student'),
+    projectController.checkProjectOfStudent,
+    pdfMiddleware.upload.array('report', 5),
+    projectController.setPDF,
+    projectController.updateProjectStudent
+  );
+
+// MANAGE PROJECT - ADMIN
 router
   .route('/')
   .get(projectController.getAllProjects)
