@@ -64,7 +64,7 @@ const projectSchema = new mongoose.Schema(
       default: Date.now,
       validate: {
         validator: function (value) {
-          return value >= this.timeRegistrationProjectStart;
+          return value >= this.startDate;
         },
         message: 'Time end must greater than or equal time start'
       }

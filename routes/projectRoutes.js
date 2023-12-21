@@ -47,6 +47,7 @@ router
   .patch(
     authController.protect,
     authController.restrictTo('HoD'),
+    projectController.checkMajorHoD,
     projectController.browseProject
   )
   .delete(

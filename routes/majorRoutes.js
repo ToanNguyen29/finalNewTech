@@ -7,12 +7,24 @@ const router = express.Router();
 router
   .route('/')
   .get(majorController.getAllMajors)
-  .post(majorController.createMajor);
+  .post(
+    authController.protect,
+    authController.restrictTo('admin'),
+    majorController.createMajor
+  );
 
 router
   .route('/:id')
   .get(majorController.getMajor)
-  .patch(majorController.updateMajor)
-  .delete(majorController.deleteMajor);
+  .patch(
+    authController.protect,
+    authController.restrictTo('admin'),
+    majorController.updateMajor
+  )
+  .delete(
+    authController.protect,
+    authController.restrictTo('admin'),
+    majorController.deleteMajor
+  );
 
 module.exports = router;

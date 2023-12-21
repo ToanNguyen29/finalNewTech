@@ -82,8 +82,8 @@ exports.setMSSV = catchAsync(async (req, res, next) => {
 });
 
 exports.createUser = factory.createOne(User);
-exports.getUser = factory.getOne(User);
-exports.getAllUsers = factory.getAll(User, { path: 'class' });
+exports.getUser = factory.getOne(User, { path: 'class major' });
+exports.getAllUsers = factory.getAll(User, { path: 'class major' });
 exports.updateUser = factory.updateOne(User);
 
 exports.deleteUser = catchAsync(async (req, res, next) => {

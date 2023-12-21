@@ -3,6 +3,7 @@ const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
+const Major = require('../models/majorModel');
 
 exports.setPDF = (req, res, next) => {
   if (req.files) {
@@ -95,6 +96,29 @@ exports.checkProjectOfStudent = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.checkMajorHoD = catchAsync(async (req, res, next) => {
+  const project = await Project.findById(req.params.id);
+
+  if (!project || !project.major) {
+    return next(
+      new AppError(
+        'Does not exist this project or do not belong to a major',
+        404
+      )
+    );
+  }
+
+  const major = await Major.findById(project.major);
+  if (!major) {
+    new AppError('Does not exist this major', 404);
+  }
+
+  if (major.HoD && major.HoD.toString() !== req.user._id.toString()) {
+    new AppError('You can not browse this major', 403);
+  }
+  next();
+});
+
 exports.getAllProjects = factory.getAll(Project, { path: 'lecturer major' });
 exports.getProject = factory.getOne(Project, { path: 'lecturer major' });
 exports.createProject = factory.createOne(Project);
@@ -124,23 +148,24 @@ exports.registrationProjectStudent = catchAsync(async (req, res, next) => {
   if (user.projectWaiting || user.project) {
     return next(new AppError('Can not register more than 1 project', 403));
   }
-  const userInProject = await User.find({ project: req.params._id });
-  if (!userInProject) {
-    return next(new AppError('Do not exist this user in poject', 404));
-  }
+  const userInProject = await User.find({ project: req.params.id });
 
+  console.log('--------------------------------------------');
+  console.log(userInProject);
+  console.log(userInProject.length);
+  console.log('--------------------------------------------');
   if (userInProject.length >= 2) {
     return next(new AppError('This project had enough member', 404));
   } else if (userInProject.length === 1) {
-    user.projectWaiting = req.params._id;
+    user.projectWaiting = req.params.id;
   } else {
-    user.project = req.params._id;
+    user.project = req.params.id;
   }
 
   await user.save();
-  const project = await Project.findById(req.params._id);
+  const project = await Project.findById(req.params.id);
   if (!project) {
-    return next(new AppError('Do not this project', 404));
+    return next(new AppError('Do not exist this project', 404));
   }
   res.status(200).json({
     status: 'success',
@@ -160,8 +185,9 @@ exports.browseProjectMember = catchAsync(async (req, res, next) => {
   }
 
   const userFirst = await User.findById(req.user._id);
+
   if (
-    !userFirst.project &&
+    !userFirst.project ||
     userFirst.project.toString() !== user.projectWaiting.toString()
   ) {
     return next(
