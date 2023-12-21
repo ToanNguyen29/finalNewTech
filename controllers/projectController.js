@@ -118,9 +118,10 @@ exports.assignFeedBackLecturer = factory.updateOne(Project, [
 ]);
 
 // Student
+// Đăng ký vào 1 project
 exports.registrationProjectStudent = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id);
-  if (!user.projectWaiting || user.project) {
+  if (user.projectWaiting || user.project) {
     return next(new AppError('Can not register more than 1 project', 403));
   }
   const userInProject = await User.find({ project: req.params._id });
@@ -147,6 +148,7 @@ exports.registrationProjectStudent = catchAsync(async (req, res, next) => {
   });
 });
 
+// Duyệt member mới vào project
 exports.browseProjectMember = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.params.userId);
   if (!user) {
@@ -180,4 +182,5 @@ exports.browseProjectMember = catchAsync(async (req, res, next) => {
   });
 });
 
+// Đăng report lên project
 exports.updateProjectStudent = factory.updateOne(Project, ['report']);

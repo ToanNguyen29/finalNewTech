@@ -65,7 +65,6 @@ router
   );
 
 // MANAGE PROJECT - STUDENT
-
 router
   .route('/:id/projectRegistrationStudent')
   .patch(
