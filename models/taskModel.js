@@ -33,7 +33,10 @@ const taskSchema = new mongoose.Schema(
       default: Date.now,
       validate: {
         validator: function (value) {
-          return value >= this.timeRegistrationProjectStart;
+          return (
+            value.format('%Y-%m-%d %H:%M:%').toString() >
+            this.startDate.format('%Y-%m-%d %H:%M:%').toString()
+          );
         },
         message: 'Time end must greater than or equal time start'
       }

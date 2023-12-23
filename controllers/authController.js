@@ -23,12 +23,12 @@ const createSendToken = (statusCode, user, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true // chỉ cho phép truy cập cookie thông qua HTTP và không cho phép truy cập thông qua JavaScript. Điều này giảm nguy cơ bị tấn công XSS (Cross-Site Scripting)
+    httpOnly: false // chỉ cho phép truy cập cookie thông qua HTTP và không cho phép truy cập thông qua JavaScript. Điều này giảm nguy cơ bị tấn công XSS (Cross-Site Scripting)
   };
 
-  if (process.env.NODE_ENV === 'production') {
-    cookieOption.secure = true; //  cookie chỉ được gửi qua kênh an toàn (https)
-  }
+  // if (process.env.NODE_ENV === 'production') {
+  //   cookieOption.secure = true; //  cookie chỉ được gửi qua kênh an toàn (https)
+  // }
 
   res.cookie('jwt', token, cookieOption);
   res.cookie('user', user, cookieOption);

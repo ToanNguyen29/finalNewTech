@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const majorSchema = new mongoose.Schema(
   {
@@ -20,7 +21,12 @@ const majorSchema = new mongoose.Schema(
       default: Date.now,
       validate: {
         validator: function (value) {
-          return value >= this.timeRegistrationProjectStart;
+          return (
+            value.format('%Y-%m-%d %H:%M:%').toString() >
+            this.timeRegistrationProjectStart
+              .format('%Y-%m-%d %H:%M:%')
+              .toString()
+          );
         },
         message: 'Time end must greater than or equal time start'
       }
