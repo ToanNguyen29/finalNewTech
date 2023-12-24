@@ -1,6 +1,7 @@
 const express = require('express');
 const taskController = require('../controllers/taskController');
 const authController = require('../controllers/authController');
+const pdfMiddleware = require('../controllers/pdfMiddleware');
 
 const router = express.Router();
 
@@ -31,6 +32,8 @@ router
     authController.protect,
     authController.restrictTo('lecturer', 'HoD'),
     taskController.checkTaskOfLecturer,
+    pdfMiddleware.upload.array('report', 5),
+    taskController.setPDF,
     taskController.updateTask
   )
   .delete(
@@ -47,6 +50,8 @@ router
     authController.protect,
     authController.restrictTo('student'),
     taskController.checkTaskOfStudent,
+    pdfMiddleware.upload.array('report', 5),
+    taskController.setPDF,
     taskController.updateTaskStudent
   );
 

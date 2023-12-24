@@ -4,6 +4,17 @@ const Project = require('../models/projectModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
+exports.setPDF = (req, res, next) => {
+  if (req.files) {
+    const media = req.files.map((file) => ({ filename: file.filename }));
+    req.body.report = media;
+  } else if (req.file) {
+    const media = { filename: req.file.filename };
+    req.body.report = media;
+  }
+  next();
+};
+
 exports.checkTaskOfLecturer = catchAsync(async (req, res, next) => {
   const task = await Task.findById(req.params.id);
   if (!task) {

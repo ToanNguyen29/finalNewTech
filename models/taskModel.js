@@ -20,6 +20,14 @@ const taskSchema = new mongoose.Schema(
       type: String,
       default: ''
     },
+    report: [
+      {
+        filename: {
+          type: String,
+          default: ''
+        }
+      }
+    ],
     review: {
       type: String,
       default: ''
