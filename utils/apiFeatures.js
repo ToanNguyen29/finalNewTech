@@ -6,7 +6,7 @@ class APIFeatures {
 
   filter() {
     const queryObj = { ...this.queryString };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    const excludedFields = ['page', 'sort', 'limit', 'fields', 'search'];
     excludedFields.forEach((el) => delete queryObj[el]);
 
     // 1B) Advanced filtering
@@ -27,6 +27,30 @@ class APIFeatures {
     }
 
     return this;
+  }
+
+  search() {
+    if (this.queryString.search) {
+      const keyword = this.queryString.search
+        ? {
+            $or: [
+              { mssv: { $regex: this.queryString.search, $options: 'i' } },
+              {
+                firstName: {
+                  $regex: this.queryString.search,
+                  $options: 'i'
+                }
+              },
+              {
+                lastName: { $regex: this.queryString.search, $options: 'i' }
+              },
+              { email: { $regex: this.queryString.search, $options: 'i' } }
+            ]
+          }
+        : {};
+
+      this.query.find(keyword);
+    }
   }
 
   limitFields() {
