@@ -18,18 +18,7 @@ const majorSchema = new mongoose.Schema(
     },
     timeRegistrationProjectEnd: {
       type: Date,
-      default: Date.now,
-      validate: {
-        validator: function (value) {
-          return (
-            value.format('%Y-%m-%d %H:%M:%').toString() >
-            this.timeRegistrationProjectStart
-              .format('%Y-%m-%d %H:%M:%')
-              .toString()
-          );
-        },
-        message: 'Time end must greater than or equal time start'
-      }
+      default: Date.now
     }
   },
   { timestamps: true }
