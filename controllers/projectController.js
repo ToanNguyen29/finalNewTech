@@ -51,16 +51,13 @@ exports.checkProjectOfLecturer = catchAsync(async (req, res, next) => {
 
   if (
     !project.lecturer ||
-    project.lecturer.toString() === req.user._id.toString() ||
-    !project.feedbackLecturer ||
-    project.feedbackLecturer.toString() === req.user._id.toString()
+    project.lecturer.toString() !== req.user._id.toString()
   ) {
-    next();
-  } else {
     return next(
       new AppError('You are not authorized to access this project', 403)
     );
   }
+  next();
 });
 
 exports.checkFeedbackLecturer = catchAsync(async (req, res, next) => {
@@ -86,9 +83,7 @@ exports.checkFeedbackLecturer = catchAsync(async (req, res, next) => {
 exports.checkProjectOfStudent = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id);
 
-  if (!user.project || user.project.toString() === req.params._id.toString()) {
-    next();
-  } else {
+  if (!user.project || user.project.toString() !== req.params._id.toString()) {
     return next(
       new AppError('You are not authorized to access this project', 403)
     );
