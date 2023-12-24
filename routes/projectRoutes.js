@@ -97,16 +97,26 @@ router
 router
   .route('/')
   .get(projectController.getAllProjects)
-  .post(projectController.createProject);
+  .post(
+    authController.protect,
+    authController.restrictTo('lecturer', 'HoD'),
+    projectController.createProject
+  );
 
 router
   .route('/:id')
   .get(projectController.getProject)
   .patch(
+    authController.protect,
+    authController.restrictTo('lecturer', 'HoD'),
     pdfMiddleware.upload.array('report', 5),
     projectController.setPDF,
     projectController.updateProject
   )
-  .delete(projectController.deleteProject);
+  .delete(
+    authController.protect,
+    authController.restrictTo('lecturer', 'HoD'),
+    projectController.deleteProject
+  );
 
 module.exports = router;

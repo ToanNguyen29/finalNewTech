@@ -41,13 +41,13 @@ router
   );
 
 // MANAGE TASK - STUDENT
-// router
-//   .route('/:id/projectByStudent')
-//   .patch(
-//     authController.protect,
-//     authController.restrictTo('student'),
-//     projectController.checkFeedbackLecturer,
-//     projectController.assignFeedBackLecturer
-//   );
+router
+  .route('/:id/taskByStudent')
+  .patch(
+    authController.protect,
+    authController.restrictTo('student'),
+    taskController.checkTaskOfStudent,
+    taskController.updateTaskStudent
+  );
 
 module.exports = router;

@@ -50,10 +50,10 @@ exports.checkProjectOfLecturer = catchAsync(async (req, res, next) => {
   }
 
   if (
-    (project.lecturer &&
-      project.lecturer.toString() === req.user._id.toString()) ||
-    (project.feedbackLecturer &&
-      project.feedbackLecturer.toString() === req.user._id.toString())
+    !project.lecturer ||
+    project.lecturer.toString() === req.user._id.toString() ||
+    !project.feedbackLecturer ||
+    project.feedbackLecturer.toString() === req.user._id.toString()
   ) {
     next();
   } else {
@@ -86,7 +86,7 @@ exports.checkFeedbackLecturer = catchAsync(async (req, res, next) => {
 exports.checkProjectOfStudent = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id);
 
-  if (user.project && user.project.toString() === req.params._id.toString()) {
+  if (!user.project || user.project.toString() === req.params._id.toString()) {
     next();
   } else {
     return next(
@@ -113,7 +113,7 @@ exports.checkMajorHoD = catchAsync(async (req, res, next) => {
     new AppError('Does not exist this major', 404);
   }
 
-  if (major.HoD && major.HoD.toString() !== req.user._id.toString()) {
+  if (!major.HoD || major.HoD.toString() !== req.user._id.toString()) {
     new AppError('You can not browse this major', 403);
   }
   next();

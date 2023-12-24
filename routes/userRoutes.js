@@ -26,15 +26,12 @@ router.patch('/updateMe', authController.protect, userController.updateMe);
 router.get('/oauth/google', authController.googleOauthHandler);
 
 // Admin
-router
-  .route('/')
-  .get(userController.getAllUsers)
-  .post(
-    authController.protect,
-    authController.restrictTo('admin'),
-    userController.setMSSV,
-    userController.createUser
-  );
+router.route('/').get(userController.getAllUsers).post(
+  // authController.protect,
+  // authController.restrictTo('admin'),
+  userController.setMSSV,
+  userController.createUser
+);
 
 router
   .route('/:id')

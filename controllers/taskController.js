@@ -16,7 +16,7 @@ exports.checkTaskOfLecturer = catchAsync(async (req, res, next) => {
   }
 
   if (
-    project.lecturer &&
+    !project.lecturer ||
     project.lecturer.toString() === req.user._id.toString()
   ) {
     next();
@@ -39,7 +39,7 @@ exports.checkTaskOfStudent = catchAsync(async (req, res, next) => {
   }
 
   if (
-    req.user.project &&
+    !req.user.project ||
     req.user.project.toString() === project._id.toString()
   ) {
     next();
@@ -57,7 +57,7 @@ exports.checkCreateTask = catchAsync(async (req, res, next) => {
   }
 
   if (
-    project.lecturer &&
+    !project.lecturer ||
     project.lecturer.toString() === req.user._id.toString()
   ) {
     next();
