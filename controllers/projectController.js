@@ -145,16 +145,16 @@ exports.registrationProjectStudent = catchAsync(async (req, res, next) => {
   }
   const userInProject = await User.find({ project: req.params.id });
 
-  console.log('--------------------------------------------');
-  console.log(userInProject);
-  console.log(userInProject.length);
-  console.log('--------------------------------------------');
+  let message = '';
+
   if (userInProject.length >= 2) {
     return next(new AppError('This project had enough member', 404));
   } else if (userInProject.length === 1) {
     user.projectWaiting = req.params.id;
+    message = 'waiting';
   } else {
     user.project = req.params.id;
+    message = 'join';
   }
 
   await user.save();
@@ -164,7 +164,8 @@ exports.registrationProjectStudent = catchAsync(async (req, res, next) => {
   }
   res.status(200).json({
     status: 'success',
-    data: project
+    data: project,
+    message: message
   });
 });
 
