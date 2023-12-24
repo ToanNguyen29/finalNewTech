@@ -261,6 +261,8 @@ exports.googleOauthHandler = catchAsync(async (req, res, next) => {
     // }
     if (user.role === 'admin') {
       res.redirect(process.env.FRONT_END_ORIGIN + '/admin');
+    } else if (user.role === 'student') {
+      res.redirect(process.env.FRONT_END_ORIGIN + '/student');
     }
   } else {
     const newUser = await User.create({
