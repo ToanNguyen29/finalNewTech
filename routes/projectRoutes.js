@@ -67,6 +67,15 @@ router
 
 // MANAGE PROJECT - STUDENT
 router
+  .route('/projectByStudent')
+  .get(
+    authController.protect,
+    authController.restrictTo('student'),
+    projectController.setProjectByStudent,
+    projectController.getProject
+  );
+
+router
   .route('/:id/projectRegistrationStudent')
   .patch(
     authController.protect,

@@ -33,6 +33,13 @@ exports.setProjectByLecturer = (req, res, next) => {
   next();
 };
 
+exports.setProjectByStudent = (req, res, next) => {
+  if (req.user.project) {
+    req.params.id = req.user.project;
+  }
+  next();
+};
+
 exports.setMajorHoD = catchAsync(async (req, res, next) => {
   const majorOfHoD = await Major.find({ HoD: req.user._id });
   if (!majorOfHoD) {
