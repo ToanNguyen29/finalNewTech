@@ -198,6 +198,11 @@ exports.browseProjectMember = catchAsync(async (req, res, next) => {
   user.projectWaiting = null;
   await user.save();
 
+  await User.updateMany(
+    { projectWaiting: user.projectWaiting },
+    { $set: { projectWaiting: null } }
+  );
+
   const project = await Project.findById(user.project);
   if (!project) {
     return next(new AppError('Do not exist this project', 404));
