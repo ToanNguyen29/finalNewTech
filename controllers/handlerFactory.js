@@ -82,6 +82,7 @@ const getAll = (Model, popOptions) =>
     const features = new APIFeatures(Model.find(), req.query)
       .filter()
       .sort()
+      .search()
       .limitFields()
       .paginate();
 

@@ -51,6 +51,7 @@ class APIFeatures {
 
       this.query.find(keyword);
     }
+    return this;
   }
 
   limitFields() {
