@@ -16,10 +16,6 @@ router
     taskController.createTask
   );
 
-router.use(
-  authController.protect,
-  authController.restrictTo('lecturer', 'HoD')
-);
 router
   .route('/:id')
   .get(

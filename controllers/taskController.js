@@ -88,6 +88,7 @@ exports.deleteTask = factory.deleteOne(Task);
 
 // MANAGE TASK - STUDENT
 exports.updateTaskStudent = factory.updateOne(Task, [
+  'status',
   'report',
   'descriptionOfStudent'
 ]);

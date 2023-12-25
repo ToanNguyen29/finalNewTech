@@ -51,7 +51,7 @@ const userSchema = new Schema(
     authType: {
       type: String,
       enum: ['local', 'google'],
-      default: 'local'
+      default: 'google'
     },
     gender: {
       type: String,
