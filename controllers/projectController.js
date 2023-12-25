@@ -121,8 +121,12 @@ exports.checkMajorHoD = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.getAllProjects = factory.getAll(Project, { path: 'lecturer major' });
-exports.getProject = factory.getOne(Project, { path: 'lecturer major' });
+exports.getAllProjects = factory.getAll(Project, {
+  path: 'lecturer major feedbackLecturer'
+});
+exports.getProject = factory.getOne(Project, {
+  path: 'lecturer major feedbackLecturer'
+});
 exports.createProject = factory.createOne(Project);
 exports.updateProject = factory.updateOne(Project);
 exports.deleteProject = factory.deleteOne(Project);
