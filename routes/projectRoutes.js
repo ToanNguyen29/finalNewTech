@@ -108,7 +108,7 @@ router
   .get(projectController.getAllProjects)
   .post(
     authController.protect,
-    authController.restrictTo('lecturer', 'HoD'),
+    authController.restrictTo('admin'),
     projectController.createProject
   );
 
@@ -117,14 +117,14 @@ router
   .get(projectController.getProject)
   .patch(
     authController.protect,
-    authController.restrictTo('lecturer', 'HoD'),
+    authController.restrictTo('admin'),
     pdfMiddleware.upload.array('report', 5),
     projectController.setPDF,
     projectController.updateProject
   )
   .delete(
     authController.protect,
-    authController.restrictTo('lecturer', 'HoD'),
+    authController.restrictTo('admin'),
     projectController.deleteProject
   );
 
