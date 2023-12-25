@@ -247,22 +247,12 @@ exports.googleOauthHandler = catchAsync(async (req, res, next) => {
 
     res.cookie('jwt', token, cookieOption);
     res.cookie('user', user, cookieOption);
-    // if (user.role==="admin"){
-    //   res.redirect(process.env.FRONT_END_ORIGIN+"/admin");
-    //   next();
-    // }
-    // else if(user.role==="student"){
-    //   res.redirect(process.env.FRONT_END_ORIGIN+"/student");
-
-    // }
-    // else if(user.role==="lecturers"){
-    //   res.redirect(process.env.FRONT_END_ORIGIN+"/student");
-
-    // }
     if (user.role === 'admin') {
       res.redirect(process.env.FRONT_END_ORIGIN + '/admin');
     } else if (user.role === 'student') {
       res.redirect(process.env.FRONT_END_ORIGIN + '/student');
+    } else if (user.role === 'lecturer') {
+      res.redirect(process.env.FRONT_END_ORIGIN + '/lecturers');
     }
   } else {
     const newUser = await User.create({
